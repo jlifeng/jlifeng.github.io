@@ -10,12 +10,10 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="# 一篇讲清楚移位和异或
-
+<meta name="description" content="
 位运算看起来很“底层”，但在很多高性能代码里都很常见。">
 <meta property="og:title" content="一篇讲清楚移位和异或">
-<meta property="og:description" content="# 一篇讲清楚移位和异或
-
+<meta property="og:description" content="
 位运算看起来很“底层”，但在很多高性能代码里都很常见。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html">
@@ -87,8 +85,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><h1>一篇讲清楚移位和异或</h1>
-<p>位运算看起来很“底层”，但在很多高性能代码里都很常见。比如 <code class="notranslate">HashMap</code> 的哈希扰动、权限标记、状态压缩、加密算法、布隆过滤器，背后都离不开移位和异或。</p>
+<div class="markdown-body" id="postBody"><p>位运算看起来很“底层”，但在很多高性能代码里都很常见。比如 <code class="notranslate">HashMap</code> 的哈希扰动、权限标记、状态压缩、加密算法、布隆过滤器，背后都离不开移位和异或。</p>
 <p>这篇文章专门讲两个最常见、也最容易混淆的位运算：</p>
 <ul>
 <li>移位：<code class="notranslate">&lt;&lt;</code>、<code class="notranslate">&gt;&gt;</code>、<code class="notranslate">&gt;&gt;&gt;</code></li>
