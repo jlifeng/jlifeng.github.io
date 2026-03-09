@@ -10,9 +10,7 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="# HashMap 中 `hash` 与数组索引的计算原理
-
-在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
+<meta name="description" content="在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
 
 ```java
 (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
@@ -24,9 +22,7 @@
 
 第一段负责把 `key` 转成更适合散列的 `hash`，第二段负责把 `hash` 映射成数组下标。">
 <meta property="og:title" content="HashMap 中 `hash` 与数组索引的计算原理">
-<meta property="og:description" content="# HashMap 中 `hash` 与数组索引的计算原理
-
-在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
+<meta property="og:description" content="在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
 
 ```java
 (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
@@ -107,8 +103,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><h1>HashMap 中 <code class="notranslate">hash</code> 与数组索引的计算原理</h1>
-<p>在 Java 8 的 <code class="notranslate">HashMap</code> 中，下面两段代码非常关键：</p>
+<div class="markdown-body" id="postBody"><p>在 Java 8 的 <code class="notranslate">HashMap</code> 中，下面两段代码非常关键：</p>
 <div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">key</span> == <span class="pl-c1">null</span>) ? <span class="pl-c1">0</span> : (<span class="pl-s1">h</span> = <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>()) ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
 <div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
 <p>第一段负责把 <code class="notranslate">key</code> 转成更适合散列的 <code class="notranslate">hash</code>，第二段负责把 <code class="notranslate">hash</code> 映射成数组下标。它们组合起来，决定了元素会被放进哪个桶。</p>
@@ -152,6 +147,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <li>最终低位不再只表示“原来的低位”，而是同时受高位影响</li>
 </ul>
 <p>这就是常说的“高位异或低位”。</p>
+<p><a href="https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html" rel="nofollow">一篇讲清楚移位和异或</a></p>
 <h3>4. 为什么这样能减少碰撞</h3>
 <p>因为后续数组索引计算主要看低位，所以必须尽量让低位也携带高位信息。</p>
 <p>如果不做扰动，那么某些 <code class="notranslate">hashCode()</code> 虽然整体不同，但只要低几位相同，就很容易映射到同一个桶。</p>

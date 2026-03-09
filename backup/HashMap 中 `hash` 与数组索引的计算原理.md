@@ -1,5 +1,3 @@
-# HashMap 中 `hash` 与数组索引的计算原理
-
 在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
 
 ```java
@@ -85,6 +83,8 @@ h ^ (h >>> 16)
 - 最终低位不再只表示“原来的低位”，而是同时受高位影响
 
 这就是常说的“高位异或低位”。
+
+[一篇讲清楚移位和异或](https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html)
 
 ### 4. 为什么这样能减少碰撞
 
