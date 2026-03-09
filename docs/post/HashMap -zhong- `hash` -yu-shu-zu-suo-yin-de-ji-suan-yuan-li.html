@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# HashMap 中 `hash` 与数组索引的计算原理
+
+在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
+
+```java
+(key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
+```
+
+```java
+(n - 1) & hash
+```
+
+第一段负责把 `key` 转成更适合散列的 `hash`，第二段负责把 `hash` 映射成数组下标。">
+<meta property="og:title" content="HashMap 中 `hash` 与数组索引的计算原理">
+<meta property="og:description" content="# HashMap 中 `hash` 与数组索引的计算原理
+
+在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
+
+```java
+(key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
+```
+
+```java
+(n - 1) & hash
+```
+
+第一段负责把 `key` 转成更适合散列的 `hash`，第二段负责把 `hash` 映射成数组下标。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jlifeng.github.io/post/HashMap%20-zhong-%20%60hash%60%20-yu-shu-zu-suo-yin-de-ji-suan-yuan-li.html">
+<meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
+<title>HashMap 中 `hash` 与数组索引的计算原理</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">HashMap 中 `hash` 与数组索引的计算原理</h1>
+<div class="title-right">
+    <a href="https://jlifeng.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/jlifeng/jlifeng.github.io/issues/1" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>HashMap 中 <code class="notranslate">hash</code> 与数组索引的计算原理</h1>
+<p>在 Java 8 的 <code class="notranslate">HashMap</code> 中，下面两段代码非常关键：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">key</span> == <span class="pl-c1">null</span>) ? <span class="pl-c1">0</span> : (<span class="pl-s1">h</span> = <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>()) ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>第一段负责把 <code class="notranslate">key</code> 转成更适合散列的 <code class="notranslate">hash</code>，第二段负责把 <code class="notranslate">hash</code> 映射成数组下标。它们组合起来，决定了元素会被放进哪个桶。</p>
+<h2>一、<code class="notranslate">hash</code> 的计算方式</h2>
+<p>先看第一段：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">key</span> == <span class="pl-c1">null</span>) ? <span class="pl-c1">0</span> : (<span class="pl-s1">h</span> = <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>()) ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
+<p>这段代码的意思是：</p>
+<ol>
+<li>如果 <code class="notranslate">key == null</code>，直接返回 <code class="notranslate">0</code></li>
+<li>如果 <code class="notranslate">key != null</code>，先取出 <code class="notranslate">key.hashCode()</code></li>
+<li>再把原始哈希值和它右移 16 位后的结果做一次异或运算</li>
+</ol>
+<p>拆开后更容易理解：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-smi">int</span> <span class="pl-s1">h</span>;
+<span class="pl-k">if</span> (<span class="pl-s1">key</span> == <span class="pl-c1">null</span>) {
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}
+<span class="pl-s1">h</span> = <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>();
+<span class="pl-k">return</span> <span class="pl-s1">h</span> ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>);</pre></div>
+<h3>1. 为什么 <code class="notranslate">null</code> 的哈希值是 <code class="notranslate">0</code></h3>
+<p><code class="notranslate">HashMap</code> 允许 <code class="notranslate">null</code> 作为 <code class="notranslate">key</code>，但 <code class="notranslate">null</code> 无法调用 <code class="notranslate">hashCode()</code>，所以实现里直接约定：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">null</span> -&gt; <span class="pl-s1">hash</span> = <span class="pl-c1">0</span></pre></div>
+<p>这不是数学规则，而是 <code class="notranslate">HashMap</code> 的实现约定。</p>
+<h3>2. 为什么不直接用 <code class="notranslate">key.hashCode()</code></h3>
+<p>很多人会以为拿到 <code class="notranslate">hashCode()</code> 就够了，但 <code class="notranslate">HashMap</code> 后面在计算数组下标时，并不会完整使用整个 32 位整数，而是主要依赖低位。</p>
+<p>如果很多对象的 <code class="notranslate">hashCode()</code> 在低位上很接近，但高位不同，那么它们最终可能还是会落到同一个桶里，导致冲突增加。</p>
+<p>例如下面两个哈希值：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">h1</span> = <span class="pl-c1">0x12340001</span>
+<span class="pl-s1">h2</span> = <span class="pl-c1">0x56780001</span></pre></div>
+<p>它们的低 16 位都是 <code class="notranslate">0x0001</code>。如果后续只依赖低位来定位桶，那么这两个值很可能发生碰撞。</p>
+<h3>3. <code class="notranslate">h ^ (h &gt;&gt;&gt; 16)</code> 到底做了什么</h3>
+<p>这一步通常被称为“扰动函数”或“位混合”。</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span></pre></div>
+<p>表示把 <code class="notranslate">h</code> 无符号右移 16 位。这样原本的高 16 位就被移动到了低 16 位区域。</p>
+<p>然后再执行：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">h</span> ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
+<p>也就是原始值与右移后的值做异或。结果就是：</p>
+<ul>
+<li>原始低位的信息还在</li>
+<li>原始高位的信息也被折叠进了低位</li>
+<li>最终低位不再只表示“原来的低位”，而是同时受高位影响</li>
+</ul>
+<p>这就是常说的“高位异或低位”。</p>
+<h3>4. 为什么这样能减少碰撞</h3>
+<p>因为后续数组索引计算主要看低位，所以必须尽量让低位也携带高位信息。</p>
+<p>如果不做扰动，那么某些 <code class="notranslate">hashCode()</code> 虽然整体不同，但只要低几位相同，就很容易映射到同一个桶。</p>
+<p>做了扰动之后：</p>
+<ul>
+<li>原本只有高位不同的哈希值</li>
+<li>现在连低位也会变得不同</li>
+<li>桶分布更均匀</li>
+</ul>
+<p>注意，这里更准确的说法是：</p>
+<blockquote>
+<p>它不是“消除碰撞”，而是“减少因为低位分布不佳导致的碰撞”。</p>
+</blockquote>
+<h3>5. 一个简单例子</h3>
+<p>假设有两个原始哈希值：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">h1</span> = <span class="pl-c1">0x12340001</span>
+<span class="pl-s1">h2</span> = <span class="pl-c1">0x56780001</span></pre></div>
+<p>做扰动后：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">h1</span> ^ (<span class="pl-s1">h1</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)
+<span class="pl-s1">h2</span> ^ (<span class="pl-s1">h2</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
+<p>由于：</p>
+<ul>
+<li><code class="notranslate">h1</code> 的高 16 位是 <code class="notranslate">0x1234</code></li>
+<li><code class="notranslate">h2</code> 的高 16 位是 <code class="notranslate">0x5678</code></li>
+</ul>
+<p>这些高位信息被混入低位后，最终参与下标计算的低位部分就更可能不同，从而降低落入同一桶的概率。</p>
+<h2>二、数组索引的计算方式</h2>
+<p>再看第二段：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>这里的目的，是把一个整数 <code class="notranslate">hash</code> 映射到数组下标范围：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">[<span class="pl-c1">0</span>, <span class="pl-s1">n</span> - <span class="pl-c1">1</span>]</pre></div>
+<h3>1. 为什么不用 <code class="notranslate">%</code></h3>
+<p>最直观的写法通常是：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">hash</span> % <span class="pl-s1">n</span></pre></div>
+<p>但 <code class="notranslate">HashMap</code> 没这么做，而是使用位运算：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>原因有两个：</p>
+<ol>
+<li>位运算比取模更快</li>
+<li>在数组长度满足特定条件时，两者结果等价</li>
+</ol>
+<h3>2. 这个等价关系的前提</h3>
+<p>前提是：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-smi">n</span> <span class="pl-s1">必须是</span> <span class="pl-c1">2</span> <span class="pl-s1">的幂</span></pre></div>
+<p>例如：</p>
+<ul>
+<li><code class="notranslate">16</code></li>
+<li><code class="notranslate">32</code></li>
+<li><code class="notranslate">64</code></li>
+<li><code class="notranslate">128</code></li>
+</ul>
+<p>这也是为什么 <code class="notranslate">HashMap</code> 的容量总是尽量保持为 2 的幂。</p>
+<h3>3. 为什么 <code class="notranslate">n - 1</code> 可以替代 <code class="notranslate">% n</code></h3>
+<p>假设：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">n</span> = <span class="pl-c1">16</span></pre></div>
+<p>那么：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">n</span> - <span class="pl-c1">1</span> = <span class="pl-c1">15</span></pre></div>
+<p>转成二进制：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">16</span>  = <span class="pl-c1">00010000</span>
+<span class="pl-c1">15</span>  = <span class="pl-c1">00001111</span></pre></div>
+<p>此时执行：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">hash</span> &amp; <span class="pl-c1">15</span></pre></div>
+<p>本质上就是只保留 <code class="notranslate">hash</code> 的低 4 位。</p>
+<p>而任意一个数对 <code class="notranslate">16</code> 取模，结果也正好只取决于低 4 位，因此：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">hash</span> % <span class="pl-c1">16</span> == <span class="pl-s1">hash</span> &amp; <span class="pl-c1">15</span></pre></div>
+<h3>4. 例子说明</h3>
+<p>例如：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">hash</span> = <span class="pl-c1">27</span></pre></div>
+<p>那么：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">27</span> % <span class="pl-c1">16</span> = <span class="pl-c1">11</span>
+<span class="pl-c1">27</span> &amp; <span class="pl-c1">15</span> = <span class="pl-c1">11</span></pre></div>
+<p>看二进制更直观：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">27</span> = <span class="pl-c1">00011011</span>
+<span class="pl-c1">15</span> = <span class="pl-c1">00001111</span>
+----------------
+&amp;  = <span class="pl-c1">00001011</span></pre></div>
+<p>结果就是 <code class="notranslate">11</code>。</p>
+<p>所以在 <code class="notranslate">n</code> 为 2 的幂时：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>既能达到取模的效果，又比 <code class="notranslate">%</code> 更高效。</p>
+<h2>三、这两段代码是怎么配合的</h2>
+<p><code class="notranslate">HashMap</code> 放入元素时，核心路径可以简化成三步：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-c1">1.</span> <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>()         <span class="pl-c">// 先拿到原始哈希值</span>
+<span class="pl-c1">2.</span> <span class="pl-s1">h</span> ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)         <span class="pl-c">// 扰动，让高位参与低位</span>
+<span class="pl-c1">3.</span> (<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span>         <span class="pl-c">// 映射成数组下标</span></pre></div>
+<p>这里最关键的逻辑链路是：</p>
+<ol>
+<li>下标计算主要依赖低位</li>
+<li>所以低位的分布必须尽量均匀</li>
+<li>如果原始 <code class="notranslate">hashCode()</code> 的高位很有区分度、低位却很差，就会产生大量冲突</li>
+<li>因此要先把高位信息混入低位</li>
+<li>然后再用位运算快速定位桶下标</li>
+</ol>
+<p>这就是这两段代码组合设计的本质。</p>
+<h2>四、常见误区</h2>
+<h3>1. 扰动函数不是强哈希算法</h3>
+<p><code class="notranslate">h ^ (h &gt;&gt;&gt; 16)</code> 只是一次轻量级混合，不是密码学意义上的哈希增强。</p>
+<p>它的目标不是“制造绝对均匀的散列”，而是：</p>
+<ul>
+<li>成本低</li>
+<li>足够快</li>
+<li>能改善低位分布</li>
+</ul>
+<p>如果某个类的 <code class="notranslate">hashCode()</code> 本身实现非常差，比如大量对象返回相同值，那么这一步也无法彻底解决问题。</p>
+<h3>2. 位运算替代取模不是无条件成立</h3>
+<p>只有当数组长度 <code class="notranslate">n</code> 是 2 的幂时：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>才能等价于：</p>
+<div class="highlight highlight-source-java"><pre class="notranslate"><span class="pl-s1">hash</span> % <span class="pl-s1">n</span></pre></div>
+<p>如果 <code class="notranslate">n</code> 不是 2 的幂，这种写法就不能保证分布正确。</p>
+<h2>五、总结</h2>
+<p><code class="notranslate">HashMap</code> 的这两个公式分别解决了两个问题：</p>
+<h3>1. <code class="notranslate">hash</code> 如何更均匀</h3>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">h</span> = <span class="pl-s1">key</span>.<span class="pl-en">hashCode</span>()) ^ (<span class="pl-s1">h</span> &gt;&gt;&gt; <span class="pl-c1">16</span>)</pre></div>
+<p>作用是把高位信息折叠到低位，减少因为低位重复而导致的哈希冲突。</p>
+<h3>2. 如何快速算出桶下标</h3>
+<div class="highlight highlight-source-java"><pre class="notranslate">(<span class="pl-s1">n</span> - <span class="pl-c1">1</span>) &amp; <span class="pl-s1">hash</span></pre></div>
+<p>作用是在数组长度为 2 的幂时，用位运算代替取模，快速得到桶索引。</p>
+<p>最终你可以把它们概括成一句话：</p>
+<blockquote>
+<p>先通过扰动函数让 <code class="notranslate">hash</code> 的低位更有区分度，再利用 2 的幂容量和位运算高效定位数组下标。</p>
+</blockquote>
+<p>这也是 Java 8 <code class="notranslate">HashMap</code> 在性能和散列分布之间做出的一个非常经典的工程化权衡。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://jlifeng.github.io">Blog Title</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","jlifeng/jlifeng.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
