@@ -1,7 +1,6 @@
 (function () {
   if (window.__TiengmingModernized) return;
-  window.__TiengmingModernized = true;
-  console.log("🍏 TiengmingModern 插件已启用 https://code.buxiantang.top/");
+  console.log("TiengmingModern 插件启动中...");
 
   const themeColors = {
     light: {
@@ -9,7 +8,6 @@
       cardBg: "rgba(255,255,255,0.25)",
       cardBorder: "1px solid rgba(255,255,255,0.2)",
       title: "#1c1c1e",
-      summary: "#444",
       meta: "#888"
     },
     dark: {
@@ -17,10 +15,11 @@
       cardBg: "rgba(32,32,32,0.3)",
       cardBorder: "1px solid rgba(255,255,255,0.08)",
       title: "#eee",
-      summary: "#aaa",
       meta: "#bbb"
     }
   };
+
+  let bg = null;
 
   function getEffectiveMode() {
     const raw = document.documentElement.getAttribute("data-color-mode");
@@ -36,16 +35,35 @@
     return l > 0.6 ? "#000" : "#fff";
   }
 
-  const bg = (() => {
-    const el = document.createElement("div");
-    el.className = "herobgcolor";
-    document.body.appendChild(el);
+  window.handleTagClick = function(event, tagName) {
+    event.preventDefault();
+    event.stopPropagation();
+    const tagUrl = `tag.html#${encodeURIComponent(tagName)}`;
+    window.location.href = tagUrl;
+  };
+
+  function initializeBackground() {
+    if (!document.body || !document.head) return null;
+
+    const existingBg = document.querySelector(".herobgcolor");
+    if (existingBg) existingBg.remove();
+
+    const bgEl = document.createElement("div");
+    bgEl.className = "herobgcolor";
+    document.body.appendChild(bgEl);
+
+    const existingStyle = document.querySelector("#tiengming-modern-styles");
+    if (existingStyle) existingStyle.remove();
+
     const style = document.createElement("style");
+    style.id = "tiengming-modern-styles";
     style.textContent = `
       .herobgcolor {
         position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         z-index: -1;
         background-size: 600% 600%;
         animation: hueflow 30s ease infinite;
@@ -56,16 +74,31 @@
         50% { filter: hue-rotate(180deg); background-position: 100% 50%; }
         100% { filter: hue-rotate(360deg); background-position: 0% 50%; }
       }
+      .post-tag {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 4px;
+        padding: 2px 6px;
+        margin-right: 4px;
+        font-size: 0.8em;
+        display: inline-block;
+      }
+      .post-tag:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        opacity: 0.8;
+      }
     `;
     document.head.appendChild(style);
-    return el;
-  })();
+
+    return bgEl;
+  }
 
   function applyTheme() {
     const mode = getEffectiveMode();
     const theme = themeColors[mode];
 
-    bg.style.background = theme.bgGradient;
+    if (bg) bg.style.background = theme.bgGradient;
 
     document.querySelectorAll(".post-card").forEach(card => {
       card.style.background = theme.cardBg;
@@ -75,11 +108,8 @@
       card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
 
       const title = card.querySelector(".post-title");
-      const summary = card.querySelector(".post-summary");
       const meta = card.querySelector(".post-meta");
-
       if (title) title.style.color = theme.title;
-      if (summary) summary.style.color = theme.summary;
       if (meta) meta.style.color = theme.meta;
     });
 
@@ -87,6 +117,76 @@
       const el = document.querySelector(sel);
       if (el) el.style.color = mode === "dark" ? "#ddd" : "";
     });
+  }
+
+  function rebuildCards() {
+    const listTitles = document.querySelectorAll(".listTitle");
+    let sideNavItems = document.querySelectorAll(".SideNav-item");
+
+    if (sideNavItems.length === 0 && listTitles.length > 0) {
+      const parents = Array.from(listTitles).map(title => {
+        let current = title.parentElement;
+        while (current && !current.getAttribute("href")) {
+          current = current.parentElement;
+          if (current === document.body) break;
+        }
+        return current;
+      }).filter(Boolean);
+
+      if (parents.length > 0) sideNavItems = parents;
+    }
+
+    if (sideNavItems.length === 0) {
+      setTimeout(rebuildCards, 1000);
+      return;
+    }
+
+    sideNavItems.forEach((card, i) => {
+      const link = card.getAttribute("href");
+      if (!link) return;
+
+      let title = card.querySelector(".listTitle")?.innerText;
+      if (!title) {
+        const filename = link.split("/").pop()?.replace(".html", "") || "未命名文章";
+        title = filename.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+      }
+
+      const labels = [...card.querySelectorAll(".Label")];
+      const time = labels.find(el => /^\d{4}/.test(el.textContent.trim()))?.textContent.trim() || "";
+      const tags = labels
+        .filter(el => el.textContent.trim() !== time)
+        .map(el => `<span class="post-tag">${el.textContent.trim()}</span>`)
+        .join("");
+
+      const newCard = document.createElement("a");
+      newCard.href = link;
+      newCard.className = "post-card";
+      newCard.style.animationDelay = `${i * 60}ms`;
+      newCard.innerHTML = `
+        <div class="post-meta">${tags}${time}</div>
+        <div class="post-title">${title}</div>
+      `;
+
+      card.replaceWith(newCard);
+    });
+
+    applyTheme();
+  }
+
+  function whenReady(callback) {
+    let done = false;
+    const run = () => {
+      if (done) return;
+      done = true;
+      callback();
+    };
+
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(run, 100);
+    } else {
+      document.addEventListener("DOMContentLoaded", () => setTimeout(run, 100), { once: true });
+      window.addEventListener("load", () => setTimeout(run, 100), { once: true });
+    }
   }
 
   if (document.documentElement.getAttribute("data-color-mode") === "auto") {
@@ -98,40 +198,24 @@
     attributeFilter: ["data-color-mode"]
   });
 
-  function rebuildCards() {
-    document.querySelectorAll(".SideNav-item").forEach((card, i) => {
-      const title = card.querySelector(".listTitle")?.innerText || "未命名文章";
-      const link = card.getAttribute("href");
-      const labels = [...card.querySelectorAll(".Label")];
-      const time = labels.find(el => /^\d{4}/.test(el.textContent.trim()))?.textContent.trim() || "";
-
-      const tags = labels.filter(el => el.textContent.trim() !== time).map(el => {
-        const tag = el.textContent.trim();
-        const bg = el.style.backgroundColor || "#999";
-        const fg = getTextColor(bg);
-        return `<span class="post-tag" style="background-color:${bg};color:${fg}">${tag}</span>`;
-      }).join("");
-
-      const summary = `本篇内容涵盖主题「${labels.map(x => x.textContent.trim()).join(" / ")}」，带你深入探索相关知识点。`;
-
-      const newCard = document.createElement("a");
-      newCard.href = link;
-      newCard.className = "post-card";
-      newCard.style.animationDelay = `${i * 60}ms`;
-      newCard.innerHTML = `
-        <div class="post-meta">${tags}<span class="post-date">${time}</span></div>
-        <h2 class="post-title">${title}</h2>
-        <p class="post-summary">${summary}</p>
-      `;
-      card.replaceWith(newCard);
-    });
-
+  whenReady(() => {
+    bg = initializeBackground();
+    rebuildCards();
     applyTheme();
-  }
 
-  document.readyState === "loading"
-    ? window.addEventListener("DOMContentLoaded", rebuildCards)
-    : rebuildCards();
+    window.__TiengmingModernized = true;
+    console.log("TiengmingModern 插件加载完成");
+  });
 
-  document.documentElement.removeAttribute("data-ui-pending");
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && window.__TiengmingModernized) {
+      const existingCards = document.querySelector(".post-card");
+      const existingBg = document.querySelector(".herobgcolor");
+
+      if (existingCards && !existingBg) {
+        bg = initializeBackground();
+        applyTheme();
+      }
+    }
+  });
 })();
