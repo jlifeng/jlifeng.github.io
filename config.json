@@ -8,6 +8,6 @@
     "i18n":"CN",
     "UTC":8,
     "urlMode":"pinyin",
-    "allHead":"<link rel=\"preconnect\" href=\"https://jlifeng.github.io\"><link rel=\"preconnect\" href=\"https://jlifeng.github.io\"><link rel=\"stylesheet\" href=\"https://code.buxiantang.top/assets/GmeekBaseTheme.css\"><script src=\"https://code.buxiantang.top/assets/GmeekCustomizeCss.js\"></script>",
+    "allHead":"<link rel=\"preconnect\" href=\"https://jlifeng.github.io\"><link rel=\"preconnect\" href=\"https://jlifeng.github.io\"><link rel=\"stylesheet\" href=\"https://raw.githubusercontent.com/jlifeng/jlifeng.github.io/refs/heads/main/static/assets/GmeekBaseTheme.css\"><script src=\"https://raw.githubusercontent.com/jlifeng/jlifeng.github.io/refs/heads/main/static/assets/GmeekCustomizeCss.js\"></script>",
     "script":"<script src='https://code.buxiantang.top/assets/backtop.js'></script><script src='https://code.buxiantang.top/assets/articletoc.js'>"
 }
