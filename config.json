@@ -12,6 +12,6 @@
     "dayTheme":"light",
     "nightTheme":"dark_colorblind",
     "urlMode":"pinyin",
-    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>",
+    "allHead":"<link rel=\"preconnect\" href=\"https://jlifeng.github.io\"><link rel=\"preconnect\" href=\"jlifeng.github.io\"><link rel=\"stylesheet\" href=\"https://raw.githubusercontent.com/tiengming/tiengming.github.io/refs/heads/main/static/assets/GmeekBaseTheme.css\"><script src=\"https://raw.githubusercontent.com/tiengming/tiengming.github.io/refs/heads/main/static/assets/GmeekCustomizeCss.js\"></script>",
     "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/articletoc.js'></script>"
 }
