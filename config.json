@@ -8,6 +8,6 @@
     "i18n":"CN",
     "UTC":8,
     "urlMode":"pinyin",
-    "allHead":"<link rel=\"preconnect\" href=\"https://code.buxiantang.top\"><link rel=\"preconnect\" href=\"https://blog.meekdai.com\"><link rel=\"stylesheet\" href=\"https://code.buxiantang.top/assets/GmeekBaseTheme.css\"><script src=\"https://code.buxiantang.top/assets/GmeekCustomizeCss.js\"></script>",
+    "allHead":"<link rel=\"preconnect\" href=\"https://code.buxiantang.top\"><link rel=\"preconnect\" href=\"https://blog.meekdai.com\"><link rel=\"stylesheet\" href=\"https://code.buxiantang.top/assets/GmeekBaseTheme.css\"><script src=\"https://market-dev01.oss-cn-zhangjiakou.aliyuncs.com/test/GmeekCustomizeCss.js\"></script>",
     "script":"<script src='https://code.buxiantang.top/assets/backtop.js'></script><script src='https://code.buxiantang.top/assets/articletoc.js'>"
 }

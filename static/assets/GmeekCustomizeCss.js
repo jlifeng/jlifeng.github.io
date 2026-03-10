@@ -1,10 +1,7 @@
 (function () {
-  // 严格的重复执行保护
-  if (window.__TiengmingModernized) {
-    return;
-  }
-  
-  console.log("🍏 TiengmingModern 插件启动中... https://code.buxiantang.top/");
+  if (window.__TiengmingModernized) return;
+  window.__TiengmingModernized = true;
+  console.log("🍏 TiengmingModern 插件已启用 https://code.buxiantang.top/");
 
   const themeColors = {
     light: {
@@ -12,6 +9,7 @@
       cardBg: "rgba(255,255,255,0.25)",
       cardBorder: "1px solid rgba(255,255,255,0.2)",
       title: "#1c1c1e",
+      summary: "#444",
       meta: "#888"
     },
     dark: {
@@ -19,6 +17,7 @@
       cardBg: "rgba(32,32,32,0.3)",
       cardBorder: "1px solid rgba(255,255,255,0.08)",
       title: "#eee",
+      summary: "#aaa",
       meta: "#bbb"
     }
   };
@@ -37,28 +36,11 @@
     return l > 0.6 ? "#000" : "#fff";
   }
 
-  // 标签点击处理函数
-  window.handleTagClick = function(event, tagName) {
-    event.preventDefault();
-    event.stopPropagation();
-    const tagUrl = `tag.html#${encodeURIComponent(tagName)}`;
-    window.location.href = tagUrl;
-  };
-
-  // 初始化背景和样式
-  function initializeBackground() {
-    const existingBg = document.querySelector('.herobgcolor');
-    if (existingBg) existingBg.remove();
-
-    const bg = document.createElement("div");
-    bg.className = "herobgcolor";
-    document.body.appendChild(bg);
-
-    const existingStyle = document.querySelector('#tiengming-modern-styles');
-    if (existingStyle) existingStyle.remove();
-
+  const bg = (() => {
+    const el = document.createElement("div");
+    el.className = "herobgcolor";
+    document.body.appendChild(el);
     const style = document.createElement("style");
-    style.id = 'tiengming-modern-styles';
     style.textContent = `
       .herobgcolor {
         position: fixed;
@@ -74,32 +56,16 @@
         50% { filter: hue-rotate(180deg); background-position: 100% 50%; }
         100% { filter: hue-rotate(360deg); background-position: 0% 50%; }
       }
-      .post-tag {
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 4px;
-        padding: 2px 6px;
-        margin-right: 4px;
-        font-size: 0.8em;
-        display: inline-block;
-      }
-      .post-tag:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        opacity: 0.8;
-      }
     `;
     document.head.appendChild(style);
-    return bg;
-  }
-
-  const bg = initializeBackground();
+    return el;
+  })();
 
   function applyTheme() {
     const mode = getEffectiveMode();
     const theme = themeColors[mode];
 
-    if (bg) bg.style.background = theme.bgGradient;
+    bg.style.background = theme.bgGradient;
 
     document.querySelectorAll(".post-card").forEach(card => {
       card.style.background = theme.cardBg;
@@ -109,9 +75,11 @@
       card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
 
       const title = card.querySelector(".post-title");
+      const summary = card.querySelector(".post-summary");
       const meta = card.querySelector(".post-meta");
 
       if (title) title.style.color = theme.title;
+      if (summary) summary.style.color = theme.summary;
       if (meta) meta.style.color = theme.meta;
     });
 
@@ -121,7 +89,6 @@
     });
   }
 
-  // 主题监听器
   if (document.documentElement.getAttribute("data-color-mode") === "auto") {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
   }
@@ -131,78 +98,9 @@
     attributeFilter: ["data-color-mode"]
   });
 
-
-
   function rebuildCards() {
-    // 查找所有可能的文章容器
-    const possibleSelectors = [
-      '.SideNav-item',
-      '.Box-row', 
-      '.d-flex',
-      '.listTitle',
-      '.Label',
-      '[class*="SideNav"]',
-      '[class*="Box"]',
-      '[class*="list"]',
-      'article',
-      '.post',
-      '[href*=".html"]'
-    ];
-    
-    possibleSelectors.forEach(selector => {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        if (elements.length <= 5) {
-          elements.forEach((el, i) => {
-            if (el.textContent && el.textContent.length < 100) {
-            }
-          });
-        }
-      }
-    });
-
-    // 查找包含 listTitle 的父元素
-    const listTitles = document.querySelectorAll('.listTitle');
-    if (listTitles.length > 0) {
-      listTitles.forEach((title, i) => {
-      });
-    }
-
-    let sideNavItems = document.querySelectorAll(".SideNav-item");
-    
-    // 如果没找到，尝试通过 listTitle 找父元素
-    if (sideNavItems.length === 0 && listTitles.length > 0) {
-      // 假设 listTitle 的父元素就是我们要找的容器
-      const parents = Array.from(listTitles).map(title => {
-        // 找到有href属性的祖先元素
-        let current = title.parentElement;
-        while (current && !current.getAttribute('href')) {
-          current = current.parentElement;
-          if (current === document.body) break;
-        }
-        return current;
-      }).filter(Boolean);
-      
-      if (parents.length > 0) {
-        sideNavItems = parents;
-      }
-    }
-    
-    if (sideNavItems.length === 0) {
-      setTimeout(rebuildCards, 1000);
-      return;
-    }
-
-
-    sideNavItems.forEach((card, i) => {
-      // 从href中提取文章标题作为备用方案
-      let title = card.querySelector(".listTitle")?.innerText;
-      if (!title) {
-        // 如果没有listTitle，从href中提取文件名作为标题
-        const href = card.getAttribute("href") || "";
-        const filename = href.split('/').pop()?.replace('.html', '') || "未命名文章";
-        title = filename.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      }
+    document.querySelectorAll(".SideNav-item").forEach((card, i) => {
+      const title = card.querySelector(".listTitle")?.innerText || "未命名文章";
       const link = card.getAttribute("href");
       const labels = [...card.querySelectorAll(".Label")];
       const time = labels.find(el => /^\d{4}/.test(el.textContent.trim()))?.textContent.trim() || "";
@@ -211,8 +109,10 @@
         const tag = el.textContent.trim();
         const bg = el.style.backgroundColor || "#999";
         const fg = getTextColor(bg);
-        return `<span class="post-tag" style="background-color:${bg};color:${fg}" data-tag="${tag}" onclick="handleTagClick(event, '${tag}')">${tag}</span>`;
+        return `<span class="post-tag" style="background-color:${bg};color:${fg}">${tag}</span>`;
       }).join("");
+
+      const summary = `本篇内容涵盖主题「${labels.map(x => x.textContent.trim()).join(" / ")}」，带你深入探索相关知识点。`;
 
       const newCard = document.createElement("a");
       newCard.href = link;
@@ -221,6 +121,7 @@
       newCard.innerHTML = `
         <div class="post-meta">${tags}<span class="post-date">${time}</span></div>
         <h2 class="post-title">${title}</h2>
+        <p class="post-summary">${summary}</p>
       `;
       card.replaceWith(newCard);
     });
@@ -228,41 +129,9 @@
     applyTheme();
   }
 
-  // 增强的DOM准备检查
-  function whenReady(callback) {
-    if (document.readyState === 'complete') {
-      setTimeout(callback, 100);
-    } else if (document.readyState === 'interactive') {
-      setTimeout(callback, 300);
-    } else {
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(callback, 200);
-      });
-      window.addEventListener('load', function() {
-        setTimeout(callback, 100);
-      });
-    }
-  }
+  document.readyState === "loading"
+    ? window.addEventListener("DOMContentLoaded", rebuildCards)
+    : rebuildCards();
 
-  // 执行主逻辑
-  whenReady(() => {
-    rebuildCards();
-    // 标记完成 - 放在最前面，避免重复执行
-    window.__TiengmingModernized = true;
-    console.log("🍏 TiengmingModern 插件加载完成");
-  });
-
-  // 页面可见性监听 - 简化逻辑，只处理样式重新应用
-  document.addEventListener('visibilitychange', function() {
-    if (!document.hidden && window.__TiengmingModernized) {
-      const existingCards = document.querySelector('.post-card');
-      const existingBg = document.querySelector('.herobgcolor');
-      
-      if (existingCards && !existingBg) {
-        initializeBackground();
-        applyTheme();
-      }
-    }
-  });
-
+  document.documentElement.removeAttribute("data-ui-pending");
 })();
