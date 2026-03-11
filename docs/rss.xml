@@ -1,5 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 09:04:03 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>MESI协议：如何让多核CPU的高速缓存保持一致？</title><link>https://jlifeng.github.io/post/MESI-xie-yi-%EF%BC%9A-ru-he-rang-duo-he-CPU-de-gao-su-huan-cun-bao-chi-yi-zhi-%EF%BC%9F.html</link><description>MESI协议：如何让多核CPU的高速缓存保持一致？
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:21:33 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>Ubuntu 22.04系统国内镜像源配置指南</title><link>https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</link><description>
+### 备份原配置文件  
+在修改前需备份原文件，防止配置错误导致系统异常：  
+```bash
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+```
+
+### 编辑源文件  
+使用文本编辑器（如`vi`或`nano`）修改源文件：  
+```bash
+sudo vi /etc/apt/sources.list
+```
+
+### 国内镜像源配置示例  
+根据需求选择以下任意一种镜像源，替换文件内容后保存。</description><guid isPermaLink="true">https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</guid><pubDate>Wed, 11 Mar 2026 13:21:01 +0000</pubDate></item><item><title>MESI协议：如何让多核CPU的高速缓存保持一致？</title><link>https://jlifeng.github.io/post/MESI-xie-yi-%EF%BC%9A-ru-he-rang-duo-he-CPU-de-gao-su-huan-cun-bao-chi-yi-zhi-%EF%BC%9F.html</link><description>MESI协议：如何让多核CPU的高速缓存保持一致？
 ============================
 
 你平时用的电脑，应该都是多核的 CPU。</description><guid isPermaLink="true">https://jlifeng.github.io/post/MESI-xie-yi-%EF%BC%9A-ru-he-rang-duo-he-CPU-de-gao-su-huan-cun-bao-chi-yi-zhi-%EF%BC%9F.html</guid><pubDate>Wed, 11 Mar 2026 09:03:37 +0000</pubDate></item><item><title>在wsl2中安装codex（原因是Codex在Windows中存在兼容问题）</title><link>https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</link><description>&gt; 个人知识库：[https://jlifeng.github.io/](https://jlifeng.github.io/)
