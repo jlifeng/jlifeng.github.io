@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 01:42:01 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>在wsl2中安装codex（原因是Codex在Windows中存在兼容问题）</title><link>https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</link><description>&gt; 个人知识库：[https://jlifeng.github.io/](https://jlifeng.github.io/)
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 02:35:49 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>在wsl2中安装codex（原因是Codex在Windows中存在兼容问题）</title><link>https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</link><description>&gt; 个人知识库：[https://jlifeng.github.io/](https://jlifeng.github.io/)
 # Node.js LTS 版本安装指南（Ubuntu/Debian）
 
 ## 安装步骤
@@ -50,7 +50,12 @@ codex
 
 ## WSL 管理工具
 推荐使用 [wsl-dashboard](https://github.com/owu/wsl-dashboard)  
-![wsl-dashboard 界面截图](https://i-blog.csdnimg.cn/direct/913051c70be94cb693c4df9cdf53d736.png)。</description><guid isPermaLink="true">https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</guid><pubDate>Wed, 11 Mar 2026 01:36:36 +0000</pubDate></item><item><title>一篇讲清楚移位和异或</title><link>https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html</link><description>
+![wsl-dashboard 界面截图](https://i-blog.csdnimg.cn/direct/913051c70be94cb693c4df9cdf53d736.png)
+
+
+# WSL 配置
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/a25d3f7bdc9d40be97b15fab5115863f.png)
+若Codex无法连接代理，请先执行/logout命令退出当前会话，然后重新登录即可。</description><guid isPermaLink="true">https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</guid><pubDate>Wed, 11 Mar 2026 01:36:36 +0000</pubDate></item><item><title>一篇讲清楚移位和异或</title><link>https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html</link><description>
 位运算看起来很“底层”，但在很多高性能代码里都很常见。</description><guid isPermaLink="true">https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html</guid><pubDate>Mon, 09 Mar 2026 03:20:11 +0000</pubDate></item><item><title>HashMap 中 `hash` 与数组索引的计算原理</title><link>https://jlifeng.github.io/post/HashMap%20-zhong-%20%60hash%60%20-yu-shu-zu-suo-yin-de-ji-suan-yuan-li.html</link><description>在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
 
 ```java

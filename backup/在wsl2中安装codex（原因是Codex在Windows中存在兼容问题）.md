@@ -50,3 +50,8 @@ codex
 ## WSL 管理工具
 推荐使用 [wsl-dashboard](https://github.com/owu/wsl-dashboard)  
 ![wsl-dashboard 界面截图](https://i-blog.csdnimg.cn/direct/913051c70be94cb693c4df9cdf53d736.png)
+
+
+# WSL 配置
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/a25d3f7bdc9d40be97b15fab5115863f.png)
+若Codex无法连接代理，请先执行/logout命令退出当前会话，然后重新登录即可。
