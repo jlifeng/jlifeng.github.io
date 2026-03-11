@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:21:33 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>Ubuntu 22.04系统国内镜像源配置指南</title><link>https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</link><description>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:42:18 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>WSL2手动安装Ubuntu</title><link>https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</link><description>
+
+### **WSL2手动安装Ubuntu完整指南：更灵活、更可控的Linux环境部署**
+
+在Windows系统上搭建Linux开发环境，WSL2（Windows Subsystem for Linux 2）已经成为了开发者的首选方案。</description><guid isPermaLink="true">https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</guid><pubDate>Wed, 11 Mar 2026 13:35:38 +0000</pubDate></item><item><title>Ubuntu 22.04系统国内镜像源配置指南</title><link>https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</link><description>
 ### 备份原配置文件  
 在修改前需备份原文件，防止配置错误导致系统异常：  
 ```bash
