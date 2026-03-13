@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Wed, 11 Mar 2026 13:42:18 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>WSL2手动安装Ubuntu</title><link>https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</link><description>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Fri, 13 Mar 2026 03:54:45 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>Java线程池实现原理及其在美团业务中的实践</title><link>https://jlifeng.github.io/post/Java-xian-cheng-chi-shi-xian-yuan-li-ji-qi-zai-mei-tuan-ye-wu-zhong-de-shi-jian.html</link><description>[Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
+==================================================================================================
+
+2020年04月02日 作者: 致远 陆晨 [文章链接](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html) 15187字 31分钟阅读
+
+随着计算机行业的飞速发展，摩尔定律逐渐失效，多核CPU成为主流。</description><guid isPermaLink="true">https://jlifeng.github.io/post/Java-xian-cheng-chi-shi-xian-yuan-li-ji-qi-zai-mei-tuan-ye-wu-zhong-de-shi-jian.html</guid><pubDate>Fri, 13 Mar 2026 03:54:13 +0000</pubDate></item><item><title>WSL2手动安装Ubuntu</title><link>https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</link><description>
 
 ### **WSL2手动安装Ubuntu完整指南：更灵活、更可控的Linux环境部署**
 
