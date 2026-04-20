@@ -86,7 +86,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/459e8bab-57a7-4518-9793-d7c4ab28e243"><img width="1546" height="1126" alt="Image" src="https://github.com/user-attachments/assets/459e8bab-57a7-4518-9793-d7c4ab28e243" style="max-width: 100%; height: auto; max-height: 1126px;; aspect-ratio: 1546 / 1126; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <h2>缓存一致性问题</h2>
 <p>那什么是缓存一致性呢？我们拿一个有两个核心的 CPU，来看一下。你可以看这里这张图，我们结合图来说。</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9da063e2-999d-451c-acd8-2649c4fff50d"><img width="2000" height="1066" alt="Image" src="https://github.com/user-attachments/assets/9da063e2-999d-451c-acd8-2649c4fff50d" style="max-width: 100%; height: auto; max-height: 1066px;; aspect-ratio: 2000 / 1066; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9da063e2-999d-451c-acd8-2649c4fff50d"><img width="2000" height="953" alt="Image" src="https://github.com/user-attachments/assets/9da063e2-999d-451c-acd8-2649c4fff50d" style="max-width: 100%; height: auto; max-height: 953px;; aspect-ratio: 2000 / 953; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>在这两个 CPU 核心里，1 号核心要写一个数据到内存里。这个怎么理解呢？我拿一个例子来给你解释。</p>
 <p>比方说，iPhone 降价了，我们要把 iPhone 最新的价格更新到内存里。为了性能问题，它采用了上一讲我们说的写回策略，先把数据写入到 L2 Cache 里面，然后把 Cache Block 标记成脏的。这个时候，数据其实并没有被同步到 L3 Cache 或者主内存里。1 号核心希望在这个 Cache Block 要被交换出去的时候，数据才写入到主内存里。</p>
 <p>如果我们的 CPU 只有 1 号核心这一个 CPU 核，那这其实是没有问题的。不过，我们旁边还有一个 2 号核心呢！这个时候，2 号核心尝试从内存里面去读取 iPhone 的价格，结果读到的是一个错误的价格。这是因为，iPhone 的价格刚刚被 1 号核心更新过。但是这个更新的信息，只出现在 1 号核心的 L2 Cache 里，而没有出现在 2 号核心的 L2 Cache 或者主内存里面。<strong>这个问题，就是所谓的缓存一致性问题，1 号核心和 2 号核心的缓存，在这个时候是不一致的。</strong></p>
@@ -95,7 +95,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>第二点叫<strong>事务的串行化</strong>（Transaction Serialization），事务串行化是说，我们在一个 CPU 核心里面的读取和写入，在其他的节点看起来，顺序是一样的。</p>
 <p>第一点写传播很容易理解。既然我们数据写完了，自然要同步到其他 CPU 核的 Cache 里。但是第二点事务的串行化，可能没那么好理解，我这里仔细解释一下。</p>
 <p>我们还拿刚才修改 iPhone 的价格来解释。这一次，我们找一个有 4 个核心的 CPU。1 号核心呢，先把 iPhone 的价格改成了 5000 块。差不多在同一个时间，2 号核心把 iPhone 的价格改成了 6000 块。这里两个修改，都会传播到 3 号核心和 4 号核心。</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/286a9d12-af0d-446c-9781-d42321fed7a2"><img width="2000" height="2000" alt="Image" src="https://github.com/user-attachments/assets/286a9d12-af0d-446c-9781-d42321fed7a2" style="max-width: 100%; height: auto; max-height: 2000px;; aspect-ratio: 2000 / 2000; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/286a9d12-af0d-446c-9781-d42321fed7a2"><img width="1665" height="2000" alt="Image" src="https://github.com/user-attachments/assets/286a9d12-af0d-446c-9781-d42321fed7a2" style="max-width: 100%; height: auto; max-height: 2000px;; aspect-ratio: 1665 / 2000; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>然而这里有个问题，3 号核心先收到了 2 号核心的写传播，再收到 1 号核心的写传播。所以 3 号核心看到的 iPhone 价格是先变成了 6000 块，再变成了 5000 块。而 4 号核心呢，是反过来的，先看到变成了 5000 块，再变成 6000 块。虽然写传播是做到了，但是各个 Cache 里面的数据，是不一致的。</p>
 <p>事实上，我们需要的是，从 1 号到 4 号核心，都能看到相同顺序的数据变化。比如说，都是先变成了 5000 块，再变成了 6000 块。这样，我们才能称之为实现了事务的串行化。</p>
 <p>事务的串行化，不仅仅是缓存一致性中所必须的。比如，我们平时所用到的系统当中，最需要保障事务串行化的就是数据库。多个不同的连接去访问数据库的时候，我们必须保障事务的串行化，做不到事务的串行化的数据库，根本没法作为可靠的商业数据库来使用。</p>
@@ -108,7 +108,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>MESI 协议，是一种叫作<strong>写失效</strong>（Write Invalidate）的协议。在写失效协议里，只有一个 CPU 核心负责写入数据，其他的核心，只是同步读取到这个写入。在这个 CPU 核心写入 Cache 之后，它会去广播一个“失效”请求告诉所有其他的 CPU 核心。其他的 CPU 核心，只是去判断自己是否也有一个“失效”版本的 Cache Block，然后把这个也标记成失效的就好了。</p>
 <p>相对于写失效协议，还有一种叫作<strong>写广播</strong>（Write Broadcast）的协议。在那个协议里，一个写入请求广播到所有的 CPU 核心，同时更新各个核心里的 Cache。</p>
 <p>写广播在实现上自然很简单，但是写广播需要占用更多的总线带宽。写失效只需要告诉其他的 CPU 核心，哪一个内存地址的缓存失效了，但是写广播还需要把对应的数据传输给其他 CPU 核心。</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1ae8c917-93ee-418f-aeba-ee67edaf5b52"><img width="1762" height="2000" alt="Image" src="https://github.com/user-attachments/assets/1ae8c917-93ee-418f-aeba-ee67edaf5b52" style="max-width: 100%; height: auto; max-height: 2000px;; aspect-ratio: 1762 / 2000; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/1ae8c917-93ee-418f-aeba-ee67edaf5b52"><img width="999" height="2000" alt="Image" src="https://github.com/user-attachments/assets/1ae8c917-93ee-418f-aeba-ee67edaf5b52" style="max-width: 100%; height: auto; max-height: 2000px;; aspect-ratio: 999 / 2000; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p>MESI 协议的由来呢，来自于我们对 Cache Line 的四个不同的标记，分别是：</p>
 <ul>
 <li>M：代表已修改（Modified）</li>
@@ -123,7 +123,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>而在共享状态下，因为同样的数据在多个 CPU 核心的 Cache 里都有。所以，当我们想要更新 Cache 里面的数据的时候，不能直接修改，而是要先向所有的其他 CPU 核心广播一个请求，要求先把其他 CPU 核心里面的 Cache，都变成无效的状态，然后再更新当前 Cache 里面的数据。这个广播操作，一般叫作 RFO（Request For Ownership），也就是获取当前对应 Cache Block 数据的所有权。</p>
 <p>有没有觉得这个操作有点儿像我们在多线程里面用到的读写锁。在共享状态下，大家都可以并行去读对应的数据。但是如果要写，我们就需要通过一个锁，获取当前写入位置的所有权。</p>
 <p>整个 MESI 的状态，可以用一个有限状态机来表示它的状态流转。需要注意的是，对于不同状态触发的事件操作，可能来自于当前 CPU 核心，也可能来自总线里其他 CPU 核心广播出来的信号。我把对应的状态机流转图放在了下面，你可以对照着<a href="https://zh.wikipedia.org/wiki/MESI%E5%8D%8F%E8%AE%AE" rel="nofollow">Wikipedia 里面 MESI 的内容</a>，仔细研读一下。</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/b4294638-884a-4796-a523-de89e578cce8"><img width="2000" height="2000" alt="Image" src="https://github.com/user-attachments/assets/b4294638-884a-4796-a523-de89e578cce8" style="max-width: 100%; height: auto; max-height: 2000px;; aspect-ratio: 2000 / 2000; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/b4294638-884a-4796-a523-de89e578cce8"><img width="2000" height="1801" alt="Image" src="https://github.com/user-attachments/assets/b4294638-884a-4796-a523-de89e578cce8" style="max-width: 100%; height: auto; max-height: 1801px;; aspect-ratio: 2000 / 1801; background-color: var(--bgColor-muted); border-radius: 6px; display: block" class="js-gh-image-fallback"></a></p>
 <p><a href="https://commons.wikimedia.org/wiki/File:Diagrama_MESI.GIF" rel="nofollow">图片来源</a></p>
 <h2>总结延伸</h2>
 <p>好了，关于 CPU Cache 的内容，我们介绍到这里就结束了。我们来总结一下。这一节，我们其实就讲了两块儿内容，一个是缓存一致性，另一个是 MESI 协议。</p>
