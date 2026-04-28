@@ -1,2 +1,105 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Mon, 27 Apr 2026 17:15:17 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>小匠知识库</title><link>https://jlifeng.github.io</link><description>个人知识库</description><copyright>小匠知识库</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://github.githubassets.com/favicons/favicon.svg</url><title>avatar</title><link>https://jlifeng.github.io</link></image><lastBuildDate>Tue, 28 Apr 2026 17:41:27 +0000</lastBuildDate><managingEditor>小匠知识库</managingEditor><ttl>60</ttl><webMaster>小匠知识库</webMaster><item><title>个人 AI Coding 实践总结</title><link>https://jlifeng.github.io/post/ge-ren-%20AI%20Coding%20-shi-jian-zong-jie.html</link><description>## 步骤
+ 
+1. 将PRD原型，自行转化为需求描述
+6. 利用 https://github.com/obra/superpowers ，让AI详细了解需求
+7. AI提问，逐步了解需求描述中缺失的需求
+8. 自行梳理需要开发的模块下的接口与其他功能清单（还需要包含一些开发规范之类的描述，比如使用那些skill来完成开发）
+9. 让AI规划出开发计划
+10. 自行审核计划（逐步完善）
+11. AI Coding
+12. Code Review
+13. 联调、Bug修复。</description><guid isPermaLink="true">https://jlifeng.github.io/post/ge-ren-%20AI%20Coding%20-shi-jian-zong-jie.html</guid><pubDate>Mon, 30 Mar 2026 07:32:01 +0000</pubDate></item><item><title>97.9%采纳率，胶水编程：业务需求出码最佳实践【天猫AI Coding实践系列】</title><link>https://jlifeng.github.io/post/97.9%25-cai-na-lv-%EF%BC%8C-jiao-shui-bian-cheng-%EF%BC%9A-ye-wu-xu-qiu-chu-ma-zui-jia-shi-jian-%E3%80%90-tian-mao-AI%20Coding-shi-jian-xi-lie-%E3%80%91.html</link><description>[97.9%采纳率，胶水编程：业务需求出码最佳实践【天猫AI Coding实践系列】](https://mp.weixin.qq.com/s/G3aKbzdGUyD2h1aVjvbr2g)。</description><guid isPermaLink="true">https://jlifeng.github.io/post/97.9%25-cai-na-lv-%EF%BC%8C-jiao-shui-bian-cheng-%EF%BC%9A-ye-wu-xu-qiu-chu-ma-zui-jia-shi-jian-%E3%80%90-tian-mao-AI%20Coding-shi-jian-xi-lie-%E3%80%91.html</guid><pubDate>Sat, 28 Mar 2026 08:06:37 +0000</pubDate></item><item><title>Java 8系列之重新认识HashMap</title><link>https://jlifeng.github.io/post/Java%208-xi-lie-zhi-zhong-xin-ren-shi-HashMap.html</link><description>[Java 8系列之重新认识HashMap](https://tech.meituan.com/2016/06/24/java-hashmap.html)。</description><guid isPermaLink="true">https://jlifeng.github.io/post/Java%208-xi-lie-zhi-zhong-xin-ren-shi-HashMap.html</guid><pubDate>Fri, 27 Mar 2026 01:17:29 +0000</pubDate></item><item><title>知识基座：让“AI 越用越懂业务”的团队经验实践【天猫AI Coding实践系列】</title><link>https://jlifeng.github.io/post/zhi-shi-ji-zuo-%EF%BC%9A-rang-%E2%80%9CAI%20-yue-yong-yue-dong-ye-wu-%E2%80%9D-de-tuan-dui-jing-yan-shi-jian-%E3%80%90-tian-mao-AI%20Coding-shi-jian-xi-lie-%E3%80%91.html</link><description>[知识基座：让“AI 越用越懂业务”的团队经验实践【天猫AI Coding实践系列】](https://mp.weixin.qq.com/s/P-p4-BH8AAOnTBRcpsoKeQ)。</description><guid isPermaLink="true">https://jlifeng.github.io/post/zhi-shi-ji-zuo-%EF%BC%9A-rang-%E2%80%9CAI%20-yue-yong-yue-dong-ye-wu-%E2%80%9D-de-tuan-dui-jing-yan-shi-jian-%E3%80%90-tian-mao-AI%20Coding-shi-jian-xi-lie-%E3%80%91.html</guid><pubDate>Wed, 25 Mar 2026 07:58:23 +0000</pubDate></item><item><title>责任链模式在复杂数据处理场景中的实战</title><link>https://jlifeng.github.io/post/ze-ren-lian-mo-shi-zai-fu-za-shu-ju-chu-li-chang-jing-zhong-de-shi-zhan.html</link><description>[责任链模式在复杂数据处理场景中的实战](https://mp.weixin.qq.com/s/eIxFizo6dokG5kcTslZhmQ)。</description><guid isPermaLink="true">https://jlifeng.github.io/post/ze-ren-lian-mo-shi-zai-fu-za-shu-ju-chu-li-chang-jing-zhong-de-shi-zhan.html</guid><pubDate>Wed, 25 Mar 2026 07:56:18 +0000</pubDate></item><item><title>Java线程池实现原理及其在美团业务中的实践</title><link>https://jlifeng.github.io/post/Java-xian-cheng-chi-shi-xian-yuan-li-ji-qi-zai-mei-tuan-ye-wu-zhong-de-shi-jian.html</link><description>[Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
+==================================================================================================
+
+2020年04月02日 作者: 致远 陆晨 [文章链接](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html) 15187字 31分钟阅读
+
+随着计算机行业的飞速发展，摩尔定律逐渐失效，多核CPU成为主流。</description><guid isPermaLink="true">https://jlifeng.github.io/post/Java-xian-cheng-chi-shi-xian-yuan-li-ji-qi-zai-mei-tuan-ye-wu-zhong-de-shi-jian.html</guid><pubDate>Fri, 13 Mar 2026 03:54:13 +0000</pubDate></item><item><title>WSL2手动安装Ubuntu</title><link>https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</link><description>
+
+### **WSL2手动安装Ubuntu完整指南：更灵活、更可控的Linux环境部署**
+
+在Windows系统上搭建Linux开发环境，WSL2（Windows Subsystem for Linux 2）已经成为了开发者的首选方案。</description><guid isPermaLink="true">https://jlifeng.github.io/post/WSL2-shou-dong-an-zhuang-Ubuntu.html</guid><pubDate>Wed, 11 Mar 2026 13:35:38 +0000</pubDate></item><item><title>Ubuntu 22.04系统国内镜像源配置指南</title><link>https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</link><description>
+### 备份原配置文件  
+在修改前需备份原文件，防止配置错误导致系统异常：  
+```bash
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+```
+
+### 编辑源文件  
+使用文本编辑器（如`vi`或`nano`）修改源文件：  
+```bash
+sudo vi /etc/apt/sources.list
+```
+
+### 国内镜像源配置示例  
+根据需求选择以下任意一种镜像源，替换文件内容后保存。</description><guid isPermaLink="true">https://jlifeng.github.io/post/Ubuntu%2022.04-xi-tong-guo-nei-jing-xiang-yuan-pei-zhi-zhi-nan.html</guid><pubDate>Wed, 11 Mar 2026 13:21:01 +0000</pubDate></item><item><title>MESI协议：如何让多核CPU的高速缓存保持一致？</title><link>https://jlifeng.github.io/post/MESI-xie-yi-%EF%BC%9A-ru-he-rang-duo-he-CPU-de-gao-su-huan-cun-bao-chi-yi-zhi-%EF%BC%9F.html</link><description>MESI协议：如何让多核CPU的高速缓存保持一致？
+============================
+
+你平时用的电脑，应该都是多核的 CPU。</description><guid isPermaLink="true">https://jlifeng.github.io/post/MESI-xie-yi-%EF%BC%9A-ru-he-rang-duo-he-CPU-de-gao-su-huan-cun-bao-chi-yi-zhi-%EF%BC%9F.html</guid><pubDate>Wed, 11 Mar 2026 09:03:37 +0000</pubDate></item><item><title>在wsl2中安装codex（原因是Codex在Windows中存在兼容问题）</title><link>https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</link><description>&gt; 个人知识库：[https://jlifeng.github.io/](https://jlifeng.github.io/)
+# Node.js LTS 版本安装指南（Ubuntu/Debian）
+
+## 安装步骤
+```bash
+# 添加 Node.js LTS 源并安装
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo bash -
+sudo apt-get install -y nodejs
+```
+
+## 验证安装
+```bash
+# 检查 Node.js 和 npm 版本
+node --version
+npm --version
+```
+
+# OpenAI Codex 安装指南
+
+## 安装步骤
+```bash
+# 全局安装 Codex
+npm i -g @openai/codex
+
+# 创建配置目录
+mkdir -p ~/.codex
+```
+
+## 配置说明
+1. 先在 Windows 系统完成安装并登录授权
+2. 将 Windows 用户目录下的 `.codex` 文件夹复制到 Linux 系统的 `/root/.codex` 目录（覆盖原有文件）
+
+## 使用验证
+```bash
+# 检查版本
+codex --version
+
+# 在项目中使用
+cd your-project
+codex
+```
+
+# 辅助工具
+
+## CC Switch
+
+[https://github.com/farion1231/cc-switch](https://github.com/farion1231/cc-switch)
+![CC Switch 界面截图](https://i-blog.csdnimg.cn/direct/badff775cba14797bc80dfb6b9aa7aec.png)
+
+## WSL 管理工具
+推荐使用 [wsl-dashboard](https://github.com/owu/wsl-dashboard)  
+![wsl-dashboard 界面截图](https://i-blog.csdnimg.cn/direct/913051c70be94cb693c4df9cdf53d736.png)
+
+
+# WSL 配置
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/a25d3f7bdc9d40be97b15fab5115863f.png)
+若Codex无法连接代理，请先执行/logout命令退出当前会话，然后重新登录即可。</description><guid isPermaLink="true">https://jlifeng.github.io/post/zai-wsl2-zhong-an-zhuang-codex%EF%BC%88-yuan-yin-shi-Codex-zai-Windows-zhong-cun-zai-jian-rong-wen-ti-%EF%BC%89.html</guid><pubDate>Wed, 11 Mar 2026 01:36:36 +0000</pubDate></item><item><title>一篇讲清楚移位和异或</title><link>https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html</link><description>
+位运算看起来很“底层”，但在很多高性能代码里都很常见。</description><guid isPermaLink="true">https://jlifeng.github.io/post/yi-pian-jiang-qing-chu-yi-wei-he-yi-huo.html</guid><pubDate>Mon, 09 Mar 2026 03:20:11 +0000</pubDate></item><item><title>HashMap 中 `hash` 与数组索引的计算原理</title><link>https://jlifeng.github.io/post/HashMap%20-zhong-%20%60hash%60%20-yu-shu-zu-suo-yin-de-ji-suan-yuan-li.html</link><description>在 Java 8 的 `HashMap` 中，下面两段代码非常关键：
+
+```java
+(key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16)
+```
+
+```java
+(n - 1) &amp; hash
+```
+
+第一段负责把 `key` 转成更适合散列的 `hash`，第二段负责把 `hash` 映射成数组下标。</description><guid isPermaLink="true">https://jlifeng.github.io/post/HashMap%20-zhong-%20%60hash%60%20-yu-shu-zu-suo-yin-de-ji-suan-yuan-li.html</guid><pubDate>Mon, 09 Mar 2026 02:20:56 +0000</pubDate></item></channel></rss>
